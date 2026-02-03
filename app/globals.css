@@ -1,0 +1,191 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+}
+
+:root {
+  /* Minna Bank / Neo-Brutalist Light Mode (Default) */
+  --background: #ffffff;
+  --foreground: #000000;
+
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+
+  --muted: #f2f2f2;
+  --muted-foreground: #737373;
+
+  --accent: #FAFF00;
+  /* Cyber Yellow */
+  --accent-foreground: #000000;
+
+  --border: #000000;
+
+  /* Semantic Colors */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  /* Safe Area for mobile */
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Minna Bank Dark Mode */
+    --background: #000000;
+    --foreground: #ffffff;
+
+    --primary: #ffffff;
+    --primary-foreground: #000000;
+
+    --muted: #1a1a1a;
+    --muted-foreground: #a3a3a3;
+
+    --accent: #FAFF00;
+    --accent-foreground: #000000;
+
+    --border: #ffffff;
+
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --danger: #f87171;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Utility Classes for that "Minna" Brutalist feel */
+@layer components {
+  .brutal-card {
+    @apply border-2 border-border bg-background p-6 transition-all duration-300;
+  }
+
+  .brutal-btn {
+    @apply border-2 border-border bg-primary text-primary-foreground px-6 py-3 font-bold uppercase tracking-wider hover:bg-accent hover:text-accent-foreground hover:translate-x-1 hover:-translate-y-1 transition-all duration-200 active:translate-x-0 active:translate-y-0 shadow-[4px_4px_0px_0px_var(--border)];
+  }
+
+  .brutal-btn-outline {
+    @apply border-2 border-border bg-transparent text-foreground px-6 py-3 font-bold uppercase tracking-wider hover:bg-accent hover:text-accent-foreground hover:translate-x-1 hover:-translate-y-1 transition-all duration-200 active:translate-x-0 active:translate-y-0 shadow-[4px_4px_0px_0px_var(--border)];
+  }
+}
+
+/* Keyframe Animations */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes pulse-accent {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bounce-subtle {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+.animate-pulse-accent {
+  animation: pulse-accent 2s ease-in-out infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+/* Mobile App Utilities */
+@layer utilities {
+  .safe-bottom {
+    padding-bottom: calc(var(--safe-area-inset-bottom) + 1rem);
+  }
+
+  .touch-feedback {
+    @apply active:scale-[0.98] transition-transform;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
