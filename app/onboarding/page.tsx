@@ -148,7 +148,7 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
                         <span className="text-5xl">PAYSKI</span>
                     </h1>
                     <p className="font-mono text-muted-foreground max-w-xs mx-auto">
-                        The financial OS for the glitch generation. Let's get you set up in under 5 minutes.
+                        The financial OS for the glitch generation. Let&apos;s get you set up in under 5 minutes.
                     </p>
                 </div>
             </div>
@@ -368,7 +368,7 @@ function SuccessStep({ onComplete }: { onComplete: () => void }) {
                         transition={{ delay: 0.3 }}
                         className="text-4xl font-black uppercase tracking-tighter"
                     >
-                        You're In!
+                        You&apos;re In!
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
