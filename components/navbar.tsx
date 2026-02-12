@@ -29,7 +29,7 @@ export function Navbar() {
                         </Link>
                     ))}
                     <Link
-                        href="/dashboard"
+                        href="/login"
                         className="text-sm font-bold uppercase tracking-widest hover:underline decoration-2 decoration-accent underline-offset-4"
                     >
                         Login
@@ -68,7 +68,7 @@ export function Navbar() {
                     ))}
                     <div className="h-px bg-border my-2" />
                     <Link
-                        href="/dashboard"
+                        href="/login"
                         onClick={() => setIsOpen(false)}
                         className="text-2xl font-black uppercase hover:text-accent transition-colors"
                     >

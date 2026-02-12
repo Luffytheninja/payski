@@ -117,7 +117,7 @@ export function TransactionDetail({ transaction, onClose }: TransactionDetailPro
                         <DetailRow
                             icon={Calendar}
                             label="Date"
-                            value={transaction.date.toLocaleDateString('en-US', {
+                            value={new Date(transaction.date).toLocaleDateString('en-US', {
                                 weekday: 'long',
                                 year: 'numeric',
                                 month: 'long',

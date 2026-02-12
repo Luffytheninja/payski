@@ -1,159 +1,63 @@
 "use client"
 
-import { motion } from "framer-motion"
-import {
-    ChevronRight,
-    Shield,
-    Bell,
-    Moon,
-    HelpCircle,
-    LogOut,
-    Smartphone,
-    Lock,
-    Eye,
-    FileText
-} from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { mockUser } from "@/lib/mock-data"
+import { FormEvent, useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+
+type Profile = {
+  id: string
+  name: string
+  email: string
+  phone?: string
+}
 
 export default function ProfilePage() {
-    const menuItems = [
-        {
-            group: "Security",
-            items: [
-                { icon: Shield, label: "Security Settings", badge: "Protected" },
-                { icon: Lock, label: "Change PIN" },
-                { icon: Smartphone, label: "Trusted Devices", badge: "2 devices" },
-            ]
-        },
-        {
-            group: "Preferences",
-            items: [
-                { icon: Bell, label: "Notifications" },
-                { icon: Moon, label: "Appearance" },
-                { icon: Eye, label: "Privacy" },
-            ]
-        },
-        {
-            group: "Support",
-            items: [
-                { icon: HelpCircle, label: "Help Center" },
-                { icon: FileText, label: "Legal" },
-            ]
-        }
-    ]
+  const router = useRouter()
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [name, setName] = useState("")
+  const [phone, setPhone] = useState("")
 
-    return (
-        <div className="min-h-screen">
-            {/* Header */}
-            <header className="sticky top-0 z-30 bg-background border-b-2 border-border px-6 py-4">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Your</p>
-                        <h1 className="text-2xl font-black">Profile</h1>
-                    </div>
-                </div>
-            </header>
+  useEffect(() => {
+    fetch("/api/profile")
+      .then((response) => response.json())
+      .then((payload: { profile?: Profile }) => {
+        if (!payload.profile) return
+        setProfile(payload.profile)
+        setName(payload.profile.name ?? "")
+        setPhone(payload.profile.phone ?? "")
+      })
+  }, [])
 
-            <div className="p-6 space-y-6">
-                {/* User Card */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    <Card>
-                        <CardContent className="p-6">
-                            <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 bg-accent border-2 border-border flex items-center justify-center font-black text-2xl text-accent-foreground">
-                                    {mockUser.name.charAt(0)}
-                                </div>
-                                <div className="flex-1">
-                                    <h2 className="font-black text-xl">{mockUser.name}</h2>
-                                    <p className="font-mono text-sm text-muted-foreground">{mockUser.email}</p>
-                                    <Badge variant="success" className="mt-2">Verified</Badge>
-                                </div>
-                                <ChevronRight size={20} className="text-muted-foreground" />
-                            </div>
-                        </CardContent>
-                    </Card>
-                </motion.div>
+  async function onSave(event: FormEvent) {
+    event.preventDefault()
+    const response = await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name, phone }),
+    })
+    if (response.ok) {
+      const payload = await response.json()
+      setProfile(payload.profile)
+    }
+  }
 
-                {/* Account Stats */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="grid grid-cols-3 gap-4"
-                >
-                    <Card className="p-4 text-center">
-                        <p className="font-mono text-xs text-muted-foreground mb-1">Member Since</p>
-                        <p className="font-black">Jan 2024</p>
-                    </Card>
-                    <Card className="p-4 text-center">
-                        <p className="font-mono text-xs text-muted-foreground mb-1">Transactions</p>
-                        <p className="font-black">247</p>
-                    </Card>
-                    <Card className="p-4 text-center">
-                        <p className="font-mono text-xs text-muted-foreground mb-1">Goals</p>
-                        <p className="font-black">3</p>
-                    </Card>
-                </motion.div>
+  async function onLogout() {
+    await fetch("/api/auth/logout", { method: "POST" })
+    router.push("/login")
+    router.refresh()
+  }
 
-                {/* Menu Sections */}
-                {menuItems.map((section, sectionIndex) => (
-                    <motion.section
-                        key={section.group}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.15 + sectionIndex * 0.05 }}
-                    >
-                        <h3 className="font-mono text-xs uppercase tracking-wider text-muted-foreground mb-3">
-                            {section.group}
-                        </h3>
-                        <Card>
-                            <CardContent className="p-0">
-                                {section.items.map((item, i) => {
-                                    const Icon = item.icon
-                                    return (
-                                        <button
-                                            key={item.label}
-                                            className={`w-full flex items-center gap-4 p-4 hover:bg-muted transition-colors touch-feedback ${i !== section.items.length - 1 ? "border-b border-border" : ""
-                                                }`}
-                                        >
-                                            <div className="w-10 h-10 bg-muted border-2 border-border flex items-center justify-center">
-                                                <Icon size={18} />
-                                            </div>
-                                            <span className="flex-1 font-bold text-sm text-left">{item.label}</span>
-                                            {item.badge && (
-                                                <Badge variant="default">{item.badge}</Badge>
-                                            )}
-                                            <ChevronRight size={18} className="text-muted-foreground" />
-                                        </button>
-                                    )
-                                })}
-                            </CardContent>
-                        </Card>
-                    </motion.section>
-                ))}
+  if (!profile) return <div className="p-6">Loading profile...</div>
 
-                {/* Logout */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.35 }}
-                >
-                    <button className="w-full flex items-center justify-center gap-2 p-4 text-red-500 font-bold hover:bg-red-500/10 transition-colors border-2 border-red-500">
-                        <LogOut size={18} />
-                        Sign Out
-                    </button>
-                </motion.div>
-
-                {/* Version */}
-                <p className="text-center font-mono text-xs text-muted-foreground">
-                    PaySki v1.0.0 (Beta)
-                </p>
-            </div>
-        </div>
-    )
+  return (
+    <div className="min-h-screen p-6 space-y-4">
+      <h1 className="text-2xl font-black">Profile</h1>
+      <p className="font-mono text-sm">{profile.email}</p>
+      <form onSubmit={onSave} className="space-y-2 border-2 border-border p-4">
+        <input className="w-full border-2 border-border p-2" value={name} onChange={(event) => setName(event.target.value)} />
+        <input className="w-full border-2 border-border p-2" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Phone" />
+        <button className="brutal-btn w-full" type="submit">Save Profile</button>
+      </form>
+      <button className="w-full border-2 border-border p-3 font-bold" onClick={onLogout}>Logout</button>
+    </div>
+  )
 }
