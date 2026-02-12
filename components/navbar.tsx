@@ -6,6 +6,12 @@ import { useState } from "react"
 import { Sheet } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 
+const NAV_LINKS = [
+    { label: "Features", href: "/features" },
+    { label: "Manifesto", href: "/manifesto" },
+    { label: "Pricing", href: "/pricing" },
+]
+
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
 
@@ -19,13 +25,13 @@ export function Navbar() {
 
                 {/* DESKTOP NAV */}
                 <div className="hidden md:flex gap-8 items-center">
-                    {["Features", "Manifesto", "Pricing"].map((item) => (
+                    {NAV_LINKS.map((item) => (
                         <Link
-                            key={item}
-                            href="#"
+                            key={item.label}
+                            href={item.href}
                             className="text-sm font-bold uppercase tracking-widest hover:underline decoration-2 decoration-accent underline-offset-4"
                         >
-                            {item}
+                            {item.label}
                         </Link>
                     ))}
                     <Link
@@ -56,14 +62,14 @@ export function Navbar() {
             {/* MOBILE MENU SHEET */}
             <Sheet open={isOpen} onClose={() => setIsOpen(false)} title="MENU">
                 <div className="flex flex-col gap-6 mt-8">
-                    {["Features", "Manifesto", "Pricing"].map((item) => (
+                    {NAV_LINKS.map((item) => (
                         <Link
-                            key={item}
-                            href="#"
+                            key={item.label}
+                            href={item.href}
                             onClick={() => setIsOpen(false)}
                             className="text-2xl font-black uppercase hover:text-accent transition-colors"
                         >
-                            {item}
+                            {item.label}
                         </Link>
                     ))}
                     <div className="h-px bg-border my-2" />
