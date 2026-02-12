@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { motion } from "framer-motion"
 import {
     Shield,
@@ -10,69 +11,46 @@ import {
     AlertTriangle,
     ChevronRight
 } from "lucide-react"
+import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Sheet } from "@/components/ui/sheet"
+import { notImplementedToast } from "@/lib/not-implemented-toast"
 
-// Mock activity log data
 const mockActivityLog = [
-    {
-        id: "act_001",
-        type: "login",
-        device: "iPhone 15 Pro",
-        location: "Lagos, Nigeria",
-        timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 mins ago
-        status: "success",
-    },
-    {
-        id: "act_002",
-        type: "transaction",
-        description: "Sent $50 to John",
-        device: "iPhone 15 Pro",
-        location: "Lagos, Nigeria",
-        timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 mins ago
-        status: "success",
-    },
-    {
-        id: "act_003",
-        type: "login",
-        device: "Chrome on Windows",
-        location: "Lagos, Nigeria",
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-        status: "success",
-    },
-    {
-        id: "act_004",
-        type: "login_failed",
-        device: "Unknown Device",
-        location: "Unknown",
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-        status: "blocked",
-    },
+    { id: "act_001", type: "login", device: "iPhone 15 Pro", location: "Lagos, Nigeria", timestamp: new Date(Date.now() - 5 * 60 * 1000), status: "success" },
+    { id: "act_002", type: "transaction", description: "Sent $50 to John", device: "iPhone 15 Pro", location: "Lagos, Nigeria", timestamp: new Date(Date.now() - 30 * 60 * 1000), status: "success" },
+    { id: "act_003", type: "login", device: "Chrome on Windows", location: "Lagos, Nigeria", timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), status: "success" },
+    { id: "act_004", type: "login_failed", device: "Unknown Device", location: "Unknown", timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), status: "blocked" },
 ]
 
 const trustedDevices = [
-    {
-        id: "dev_001",
-        name: "iPhone 15 Pro",
-        type: "mobile",
-        lastActive: new Date(),
-        isCurrent: true,
-        trustScore: 98,
-    },
-    {
-        id: "dev_002",
-        name: "MacBook Pro",
-        type: "desktop",
-        lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000),
-        isCurrent: false,
-        trustScore: 95,
-    },
+    { id: "dev_001", name: "iPhone 15 Pro", type: "mobile", lastActive: new Date(), isCurrent: true, trustScore: 98 },
+    { id: "dev_002", name: "MacBook Pro", type: "desktop", lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000), isCurrent: false, trustScore: 95 },
 ]
 
+type SecurityAction = "change-pin" | "manage-devices" | "lock-account" | null
+
+const actionContent: Record<Exclude<SecurityAction, null>, { title: string, details: string[] }> = {
+    "change-pin": {
+        title: "Change PIN",
+        details: ["Verify current PIN", "Enter a new 4-digit PIN", "Confirm with biometric unlock"],
+    },
+    "manage-devices": {
+        title: "Manage devices",
+        details: ["Review recent device sessions", "Remove unrecognized devices", "Force re-authentication"],
+    },
+    "lock-account": {
+        title: "Lock account",
+        details: ["Temporarily freeze outgoing transfers", "Alert support security team", "Review suspicious activity"],
+    },
+}
+
 export default function SecurityPage() {
+    const [activeAction, setActiveAction] = useState<SecurityAction>(null)
+
     return (
         <div className="min-h-screen">
-            {/* Header */}
             <header className="sticky top-0 z-30 bg-background border-b-2 border-border px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div>
@@ -87,11 +65,7 @@ export default function SecurityPage() {
             </header>
 
             <div className="p-6 space-y-6">
-                {/* Security Score */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                     <Card className="bg-foreground text-background border-0">
                         <CardContent className="pt-6">
                             <div className="flex items-center justify-between">
@@ -108,87 +82,56 @@ export default function SecurityPage() {
                     </Card>
                 </motion.div>
 
-                {/* Trusted Devices */}
-                <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                >
+                <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="font-black uppercase tracking-tight">Trusted Devices</h3>
                         <span className="font-mono text-xs text-muted-foreground">{trustedDevices.length} devices</span>
                     </div>
                     <div className="space-y-3">
                         {trustedDevices.map((device, i) => (
-                            <motion.div
-                                key={device.id}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.15 + i * 0.05 }}
-                            >
-                                <Card className="p-4">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-muted border-2 border-border flex items-center justify-center">
-                                            <Smartphone size={24} />
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <p className="font-bold text-sm">{device.name}</p>
-                                                {device.isCurrent && (
-                                                    <Badge variant="success">Current</Badge>
-                                                )}
+                            <motion.div key={device.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 + i * 0.05 }}>
+                                <button className="w-full text-left" onClick={() => notImplementedToast(`${device.name} security details`)}>
+                                    <Card className="p-4 hover:bg-muted transition-colors touch-feedback">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-muted border-2 border-border flex items-center justify-center">
+                                                <Smartphone size={24} />
                                             </div>
-                                            <p className="font-mono text-xs text-muted-foreground">
-                                                Last active: {device.isCurrent ? "Now" : "Yesterday"}
-                                            </p>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2">
+                                                    <p className="font-bold text-sm">{device.name}</p>
+                                                    {device.isCurrent && <Badge variant="success">Current</Badge>}
+                                                </div>
+                                                <p className="font-mono text-xs text-muted-foreground">Last active: {device.isCurrent ? "Now" : "Yesterday"}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="font-black text-lg text-green-500">{device.trustScore}%</p>
+                                                <p className="font-mono text-xs text-muted-foreground">Trust</p>
+                                            </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="font-black text-lg text-green-500">{device.trustScore}%</p>
-                                            <p className="font-mono text-xs text-muted-foreground">Trust</p>
-                                        </div>
-                                    </div>
-                                </Card>
+                                    </Card>
+                                </button>
                             </motion.div>
                         ))}
                     </div>
                 </motion.section>
 
-                {/* Activity Log */}
-                <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                >
+                <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="font-black uppercase tracking-tight">Activity Log</h3>
-                        <button className="font-mono text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
+                        <Link href="/timeline" className="font-mono text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
                             View All <ChevronRight size={14} />
-                        </button>
+                        </Link>
                     </div>
                     <div className="space-y-3">
                         {mockActivityLog.map((activity, i) => (
-                            <motion.div
-                                key={activity.id}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.25 + i * 0.05 }}
-                            >
+                            <motion.div key={activity.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 + i * 0.05 }}>
                                 <Card className={`p-4 ${activity.status === "blocked" ? "border-red-500" : ""}`}>
                                     <div className="flex items-center gap-4">
-                                        <div className={`w-10 h-10 border-2 flex items-center justify-center ${activity.status === "blocked"
-                                                ? "border-red-500 bg-red-500/10"
-                                                : "border-border bg-muted"
-                                            }`}>
-                                            {activity.status === "blocked" ? (
-                                                <AlertTriangle size={18} className="text-red-500" />
-                                            ) : (
-                                                <CheckCircle2 size={18} className="text-green-500" />
-                                            )}
+                                        <div className={`w-10 h-10 border-2 flex items-center justify-center ${activity.status === "blocked" ? "border-red-500 bg-red-500/10" : "border-border bg-muted"}`}>
+                                            {activity.status === "blocked" ? <AlertTriangle size={18} className="text-red-500" /> : <CheckCircle2 size={18} className="text-green-500" />}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-bold text-sm capitalize">
-                                                {activity.type.replace("_", " ")}
-                                            </p>
+                                            <p className="font-bold text-sm capitalize">{activity.type.replace("_", " ")}</p>
                                             <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
                                                 <Smartphone size={10} />
                                                 <span className="truncate">{activity.device}</span>
@@ -202,9 +145,7 @@ export default function SecurityPage() {
                                                 <Clock size={10} />
                                                 {formatTimeAgo(activity.timestamp)}
                                             </div>
-                                            {activity.status === "blocked" && (
-                                                <Badge variant="destructive" className="mt-1">Blocked</Badge>
-                                            )}
+                                            {activity.status === "blocked" && <Badge variant="destructive" className="mt-1">Blocked</Badge>}
                                         </div>
                                     </div>
                                 </Card>
@@ -213,43 +154,69 @@ export default function SecurityPage() {
                     </div>
                 </motion.section>
 
-                {/* Security Actions */}
-                <motion.section
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="space-y-3"
-                >
+                <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-3">
                     <h3 className="font-black uppercase tracking-tight">Quick Actions</h3>
-                    <Card className="p-4 hover:bg-muted cursor-pointer transition-colors">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <Shield size={20} />
-                                <span className="font-bold text-sm">Change PIN</span>
+                    <button className="w-full" onClick={() => setActiveAction("change-pin")}>
+                        <Card className="p-4 hover:bg-muted cursor-pointer transition-colors">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <Shield size={20} />
+                                    <span className="font-bold text-sm">Change PIN</span>
+                                </div>
+                                <ChevronRight size={18} className="text-muted-foreground" />
                             </div>
-                            <ChevronRight size={18} className="text-muted-foreground" />
-                        </div>
-                    </Card>
-                    <Card className="p-4 hover:bg-muted cursor-pointer transition-colors">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <Smartphone size={20} />
-                                <span className="font-bold text-sm">Manage Devices</span>
+                        </Card>
+                    </button>
+                    <button className="w-full" onClick={() => setActiveAction("manage-devices")}>
+                        <Card className="p-4 hover:bg-muted cursor-pointer transition-colors">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <Smartphone size={20} />
+                                    <span className="font-bold text-sm">Manage Devices</span>
+                                </div>
+                                <ChevronRight size={18} className="text-muted-foreground" />
                             </div>
-                            <ChevronRight size={18} className="text-muted-foreground" />
-                        </div>
-                    </Card>
-                    <Card className="p-4 hover:bg-red-500/10 cursor-pointer transition-colors border-red-500 text-red-500">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <AlertTriangle size={20} />
-                                <span className="font-bold text-sm">Lock Account</span>
+                        </Card>
+                    </button>
+                    <button className="w-full" onClick={() => setActiveAction("lock-account")}>
+                        <Card className="p-4 hover:bg-red-500/10 cursor-pointer transition-colors border-red-500 text-red-500">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <AlertTriangle size={20} />
+                                    <span className="font-bold text-sm">Lock Account</span>
+                                </div>
+                                <ChevronRight size={18} />
                             </div>
-                            <ChevronRight size={18} />
-                        </div>
-                    </Card>
+                        </Card>
+                    </button>
                 </motion.section>
             </div>
+
+            <Sheet
+                open={activeAction !== null}
+                onClose={() => setActiveAction(null)}
+                title={activeAction ? actionContent[activeAction].title : undefined}
+            >
+                {activeAction && (
+                    <div className="space-y-4">
+                        <p className="font-mono text-sm text-muted-foreground">Placeholder workflow while backend security orchestration is in progress.</p>
+                        <div className="space-y-2">
+                            {actionContent[activeAction].details.map((step) => (
+                                <div key={step} className="border-2 border-border p-3 font-mono text-xs">• {step}</div>
+                            ))}
+                        </div>
+                        <button
+                            className="w-full brutal-btn"
+                            onClick={() => {
+                                notImplementedToast(actionContent[activeAction].title)
+                                setActiveAction(null)
+                            }}
+                        >
+                            Confirm
+                        </button>
+                    </div>
+                )}
+            </Sheet>
         </div>
     )
 }
