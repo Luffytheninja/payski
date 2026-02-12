@@ -39,19 +39,79 @@ type Device = {
   trustScore: number
 }
 
+type StoredAccount = {
+  id: string
+  name: string
+  type: string
+  balance: number
+  currency: string
+  color?: string
+  userId?: string
+}
+
+type StoredTransaction = {
+  id: string
+  amount: number
+  currency: string
+  type: string
+  status: string
+  description: string
+  merchant?: string
+  category: string
+  date: string | Date
+  accountId: string
+  metadata?: Record<string, unknown>
+  userId?: string
+}
+
+type StoredGoal = {
+  id: string
+  name: string
+  targetAmount: number
+  currentAmount: number
+  currency: string
+  deadline?: string | Date | null
+  color: string
+  icon: string
+  contributions: unknown[]
+  userId?: string
+}
+
+type StoredInsight = {
+  id: string
+  type: string
+  title: string
+  description: string
+  explanation: string
+  createdAt: string | Date
+  isActionable: boolean
+  feedback?: "helpful" | "not_helpful" | null
+}
+
+type StoredTimelineEvent = {
+  id: string
+  type: string
+  date: string | Date
+  title: string
+  description: string
+  amount?: number
+  isPast: boolean
+  isFuture: boolean
+}
+
 type AppData = {
   users: AppUser[]
   sessions: Session[]
-  accounts: Array<Record<string, unknown>>
-  transactions: Array<Record<string, unknown>>
-  goals: Array<Record<string, unknown>>
-  insights: Array<Record<string, unknown>>
-  timelineEvents: Array<Record<string, unknown>>
+  accounts: StoredAccount[]
+  transactions: StoredTransaction[]
+  goals: StoredGoal[]
+  insights: StoredInsight[]
+  timelineEvents: StoredTimelineEvent[]
   activities: Activity[]
   devices: Device[]
 }
 
-function serializeDates<T extends Record<string, unknown>>(value: T): T {
+function serializeDates<T>(value: T): T {
   return JSON.parse(JSON.stringify(value))
 }
 
@@ -135,7 +195,7 @@ export async function destroySession(token: string | undefined): Promise<void> {
   await writeData(data)
 }
 
-export async function appendTransaction(transaction: Record<string, unknown>): Promise<void> {
+export async function appendTransaction(transaction: StoredTransaction): Promise<void> {
   const data = await readData()
   data.transactions.unshift(transaction)
   data.timelineEvents.unshift({
