@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Payski
 
-## Getting Started
+Payski is a Next.js 16 finance demo app with a marketing homepage, onboarding, authentication, and authenticated product surfaces (dashboard, timeline, insights, goals, profile, security).
 
-First, run the development server:
+## What is implemented
+
+- Cookie-based auth session APIs (`/api/auth/*`) and middleware route protection.
+- JSON-backed persistence in `data/app-data.json` through server helpers in `lib/server/store.ts`.
+- API-backed data flows for accounts, transactions, goals, insights feedback, timeline, profile, and security.
+- Onboarding flow that verifies and registers users.
+- Login/logout flow and profile editing.
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Demo credentials
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Email: `alex@example.com`
+- Password: `demo-password`
 
-## Learn More
+## Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Copy `.env.example` to `.env.local`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `npm run dev` – start dev server
+- `npm run lint` – run ESLint
+- `npm run build` – production build
 
-## Deploy on Vercel
+## Data model notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The app currently uses a file-backed JSON store (`data/app-data.json`). This keeps the app runnable in a single repo without external infrastructure. For production, replace with PostgreSQL + migrations.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+Deploy as a standard Next.js app (e.g. Vercel). Ensure writable storage strategy is replaced for multi-instance deployments.
