@@ -85,11 +85,11 @@ body {
   }
 
   .brutal-btn {
-    @apply border-2 border-border bg-primary text-primary-foreground px-6 py-3 font-bold uppercase tracking-wider hover:bg-accent hover:text-accent-foreground hover:translate-x-1 hover:-translate-y-1 transition-all duration-200 active:translate-x-0 active:translate-y-0 shadow-[4px_4px_0px_0px_var(--border)];
+    @apply border-2 border-border bg-primary text-primary-foreground px-6 py-3 font-bold uppercase tracking-wider hover:bg-accent hover:text-accent-foreground hover:translate-x-1 hover:-translate-y-1 transition-all duration-200 active:translate-x-0 active:translate-y-0 shadow-[4px_4px_0px_0px_var(--border)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
   }
 
   .brutal-btn-outline {
-    @apply border-2 border-border bg-transparent text-foreground px-6 py-3 font-bold uppercase tracking-wider hover:bg-accent hover:text-accent-foreground hover:translate-x-1 hover:-translate-y-1 transition-all duration-200 active:translate-x-0 active:translate-y-0 shadow-[4px_4px_0px_0px_var(--border)];
+    @apply border-2 border-border bg-transparent text-foreground px-6 py-3 font-bold uppercase tracking-wider hover:bg-accent hover:text-accent-foreground hover:translate-x-1 hover:-translate-y-1 transition-all duration-200 active:translate-x-0 active:translate-y-0 shadow-[4px_4px_0px_0px_var(--border)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
   }
 }
 

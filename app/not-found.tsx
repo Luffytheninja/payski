@@ -1,6 +1,5 @@
 import Link from "next/link"
-import { FileQuestion, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react"
 
 export default function NotFound() {
     return (
@@ -19,11 +18,12 @@ export default function NotFound() {
                 The financial data you are looking for has been liquidated or never existed.
             </p>
 
-            <Link href="/dashboard">
-                <Button size="lg" className="flex items-center gap-2">
-                    <ArrowLeft size={18} />
-                    Return to Safety
-                </Button>
+            <Link
+                href="/dashboard"
+                className="brutal-btn flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+                <ArrowLeft size={18} />
+                Return to Safety
             </Link>
         </div>
     )

@@ -22,11 +22,12 @@ export function Hero() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <Link href="/onboarding">
-                        <button className="brutal-btn flex items-center justify-center gap-2 group">
-                            Download Payski
-                            <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-                        </button>
+                    <Link
+                        href="/onboarding"
+                        className="brutal-btn flex items-center justify-center gap-2 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                        Download Payski
+                        <ArrowRight className="group-hover:translate-x-1 transition-transform" />
                     </Link>
 
                     <button className="brutal-btn-outline">
