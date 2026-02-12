@@ -4,7 +4,6 @@ import Link from "next/link"
 import { Menu } from "lucide-react"
 import { useState } from "react"
 import { Sheet } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
@@ -38,13 +37,15 @@ export function Navbar() {
 
                 {/* CTA & MOBILE */}
                 <div className="flex items-center gap-4">
-                    <Link href="/onboarding" className="hidden md:block">
-                        <button className="brutal-btn text-sm py-2 px-4 shadow-[2px_2px_0px_0px_var(--border)]">
-                            Get App
-                        </button>
+                    <Link
+                        href="/onboarding"
+                        className="hidden md:block brutal-btn text-sm py-2 px-4 shadow-[2px_2px_0px_0px_var(--border)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                        Get App
                     </Link>
 
                     <button
+                        type="button"
                         className="md:hidden p-2 hover:bg-muted"
                         onClick={() => setIsOpen(true)}
                     >
@@ -74,10 +75,12 @@ export function Navbar() {
                     >
                         Login
                     </Link>
-                    <Link href="/onboarding" onClick={() => setIsOpen(false)}>
-                        <Button className="w-full mt-4" size="lg">
-                            Get App
-                        </Button>
+                    <Link
+                        href="/onboarding"
+                        onClick={() => setIsOpen(false)}
+                        className="w-full mt-4 brutal-btn text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                        Get App
                     </Link>
                 </div>
             </Sheet>
