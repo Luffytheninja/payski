@@ -16,13 +16,13 @@ export default function Home() {
       </div>
 
       {/* DEMO SECTION */}
-      <section className="container mx-auto py-20 px-6 flex flex-col md:flex-row gap-12 items-center">
+      <section className="container mx-auto py-12 sm:py-16 md:py-20 px-4 sm:px-6 flex flex-col md:flex-row gap-8 sm:gap-10 md:gap-12 items-center">
         <div className="w-full md:w-1/2 space-y-6">
-          <h2 className="text-5xl font-black uppercase tracking-tighter leading-none">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
             Money moves <br />
             <span className="bg-accent px-2">faster than light.</span>
           </h2>
-          <p className="font-mono text-muted-foreground text-lg">
+          <p className="font-mono text-muted-foreground text-base sm:text-lg">
             Try the simulator. See how it feels to have total control.
             Zero friction, infinite upside.
           </p>
@@ -33,15 +33,15 @@ export default function Home() {
       </section>
 
       {/* GRID SECTION -- Just a preview */}
-      <section className="container mx-auto py-20 px-6 border-t-2 border-border">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="container mx-auto py-12 sm:py-16 md:py-20 px-4 sm:px-6 border-t-2 border-border">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {[
             { title: "No Hidden Fees", desc: "We don't steal your money. That's old school." },
             { title: "Instant", desc: "Faster than a serotonin hit. Blink and it's there." },
             { title: "Global", desc: "Borderless by default. Use Payski anywhere." },
           ].map((item, i) => (
             <div key={i} className="brutal-card group hover:-translate-y-2">
-              <h3 className="text-2xl font-black mb-4 uppercase decoration-accent decoration-4 underline-offset-4 group-hover:underline">
+              <h3 className="text-xl sm:text-2xl font-black mb-4 uppercase decoration-accent decoration-4 underline-offset-4 group-hover:underline">
                 {item.title}
               </h3>
               <p className="font-mono text-muted-foreground">
