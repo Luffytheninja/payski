@@ -2,20 +2,35 @@
 
 import { motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, Calendar, TrendingUp, TrendingDown, Clock, AlertCircle } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { mockTimelineEvents, formatCurrency } from "@/lib/mock-data"
+import { getTimelineData } from "@/lib/actions"
+import { formatCurrency } from "@/lib/mock-data"
 import type { TimelineEvent } from "@/lib/types"
 
 export default function TimelinePage() {
     const today = new Date()
     const [selectedDate, setSelectedDate] = useState(today)
 
+    const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        getTimelineData().then(res => {
+            setTimelineEvents(res)
+            setIsLoading(false)
+        })
+    }, [])
+
+    if (isLoading) {
+        return <div className="min-h-screen flex items-center justify-center font-mono text-sm">Loading timeline...</div>
+    }
+
     // Group events by time period
-    const pastEvents = mockTimelineEvents.filter(e => e.isPast)
-    const currentEvents = mockTimelineEvents.filter(e => !e.isPast && !e.isFuture)
-    const futureEvents = mockTimelineEvents.filter(e => e.isFuture)
+    const pastEvents = timelineEvents.filter(e => e.isPast)
+    const currentEvents = timelineEvents.filter(e => !e.isPast && !e.isFuture)
+    const futureEvents = timelineEvents.filter(e => e.isFuture)
 
     return (
         <div className="min-h-screen">

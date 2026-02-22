@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model User {
+  id        String   @id // Clerk User ID
+  name      String
+  email     String   @unique
+  avatar    String?
+  createdAt DateTime @default(now())
+
+  accounts Account[]
+  insights Insight[]
+  goals    Goal[]
+}
+
+model Account {
+  id       String  @id @default(cuid())
+  name     String
+  type     String // "checking" | "savings" | "goal"
+  balance  Float   @default(0)
+  currency String  @default("USD")
+  color    String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  amount      Float
+  currency    String   @default("USD")
+  type        String // "debit" | "credit" | "transfer"
+  status      String // "pending" | "completed" | "scheduled" | "failed"
+  description String
+  merchant    String?
+  category    String
+  date        DateTime
+  metadata    Json? // { icon?: string, location?: string, notes?: string }
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+}
+
+model Insight {
+  id           String   @id @default(cuid())
+  type         String // "spending" | "forecast" | "anomaly" | "opportunity" | "goal_progress"
+  title        String
+  description  String
+  explanation  String
+  createdAt    DateTime @default(now())
+  isActionable Boolean  @default(false)
+  actionLabel  String?
+  actionType   String?
+  feedback     String? // "helpful" | "not_helpful"
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Goal {
+  id            String    @id @default(cuid())
+  name          String
+  targetAmount  Float
+  currentAmount Float     @default(0)
+  currency      String    @default("USD")
+  deadline      DateTime?
+  color         String
+  icon          String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  contributions GoalContribution[]
+}
+
+model GoalContribution {
+  id     String   @id @default(cuid())
+  amount Float
+  date   DateTime @default(now())
+
+  goalId String
+  goal   Goal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+}

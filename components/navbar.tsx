@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Menu } from "lucide-react"
 import { useState } from "react"
+import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs"
 import { Sheet } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 
@@ -28,21 +29,41 @@ export function Navbar() {
                             {item}
                         </Link>
                     ))}
-                    <Link
-                        href="/dashboard"
-                        className="text-sm font-bold uppercase tracking-widest hover:underline decoration-2 decoration-accent underline-offset-4"
-                    >
-                        Login
-                    </Link>
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <button className="text-sm font-bold uppercase tracking-widest hover:underline decoration-2 decoration-accent underline-offset-4">
+                                Login
+                            </button>
+                        </SignInButton>
+                    </SignedOut>
+                    <SignedIn>
+                        <Link
+                            href="/dashboard"
+                            className="text-sm font-bold uppercase tracking-widest hover:underline decoration-2 decoration-accent underline-offset-4"
+                        >
+                            Log In
+                        </Link>
+                    </SignedIn>
                 </div>
 
                 {/* CTA & MOBILE */}
                 <div className="flex items-center gap-4">
-                    <Link href="/onboarding" className="hidden md:block">
-                        <button className="brutal-btn text-sm py-2 px-4 shadow-[2px_2px_0px_0px_var(--border)]">
-                            Get App
-                        </button>
-                    </Link>
+                    <SignedIn>
+                        <UserButton 
+                            appearance={{
+                                elements: {
+                                    userButtonAvatarBox: "h-10 w-10 rounded-none border-2 border-border shadow-[2px_2px_0px_0px_var(--border)]"
+                                }
+                            }}
+                        />
+                    </SignedIn>
+                    <SignedOut>
+                        <Link href="/onboarding" className="hidden md:block">
+                            <button className="brutal-btn text-sm py-2 px-4 shadow-[2px_2px_0px_0px_var(--border)]">
+                                Get App
+                            </button>
+                        </Link>
+                    </SignedOut>
 
                     <button
                         className="md:hidden p-2 hover:bg-muted"
@@ -67,18 +88,33 @@ export function Navbar() {
                         </Link>
                     ))}
                     <div className="h-px bg-border my-2" />
-                    <Link
-                        href="/dashboard"
-                        onClick={() => setIsOpen(false)}
-                        className="text-2xl font-black uppercase hover:text-accent transition-colors"
-                    >
-                        Login
-                    </Link>
-                    <Link href="/onboarding" onClick={() => setIsOpen(false)}>
-                        <Button className="w-full mt-4" size="lg">
-                            Get App
-                        </Button>
-                    </Link>
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <button 
+                                onClick={() => setIsOpen(false)}
+                                className="text-2xl font-black uppercase text-left hover:text-accent transition-colors"
+                            >
+                                Login
+                            </button>
+                        </SignInButton>
+                        <Link href="/onboarding" onClick={() => setIsOpen(false)}>
+                            <Button className="w-full mt-4" size="lg">
+                                Get App
+                            </Button>
+                        </Link>
+                    </SignedOut>
+                    <SignedIn>
+                        <Link
+                            href="/dashboard"
+                            onClick={() => setIsOpen(false)}
+                            className="text-2xl font-black uppercase hover:text-accent transition-colors"
+                        >
+                            Dashboard
+                        </Link>
+                        <div className="mt-4 p-4 border-2 border-border bg-muted">
+                            <UserButton showName />
+                        </div>
+                    </SignedIn>
                 </div>
             </Sheet>
         </nav>

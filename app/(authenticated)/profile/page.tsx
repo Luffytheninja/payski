@@ -15,9 +15,19 @@ import {
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { mockUser } from "@/lib/mock-data"
+import { useUser, useClerk } from "@clerk/nextjs"
 
 export default function ProfilePage() {
+    const { user, isLoaded } = useUser()
+    const { signOut } = useClerk()
+
+    if (!isLoaded || !user) {
+        return <div className="min-h-screen flex items-center justify-center font-mono text-sm">Loading profile...</div>
+    }
+
+    const userName = user.fullName || user.firstName || "User"
+    const userEmail = user.primaryEmailAddress?.emailAddress || ""
+
     const menuItems = [
         {
             group: "Security",
@@ -66,11 +76,11 @@ export default function ProfilePage() {
                         <CardContent className="p-6">
                             <div className="flex items-center gap-4">
                                 <div className="w-16 h-16 bg-accent border-2 border-border flex items-center justify-center font-black text-2xl text-accent-foreground">
-                                    {mockUser.name.charAt(0)}
+                                    {userName.charAt(0)}
                                 </div>
                                 <div className="flex-1">
-                                    <h2 className="font-black text-xl">{mockUser.name}</h2>
-                                    <p className="font-mono text-sm text-muted-foreground">{mockUser.email}</p>
+                                    <h2 className="font-black text-xl">{userName}</h2>
+                                    <p className="font-mono text-sm text-muted-foreground">{userEmail}</p>
                                     <Badge variant="success" className="mt-2">Verified</Badge>
                                 </div>
                                 <ChevronRight size={20} className="text-muted-foreground" />
@@ -143,7 +153,7 @@ export default function ProfilePage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.35 }}
                 >
-                    <button className="w-full flex items-center justify-center gap-2 p-4 text-red-500 font-bold hover:bg-red-500/10 transition-colors border-2 border-red-500">
+                    <button onClick={() => signOut()} className="w-full flex items-center justify-center gap-2 p-4 text-red-500 font-bold hover:bg-red-500/10 transition-colors border-2 border-red-500">
                         <LogOut size={18} />
                         Sign Out
                     </button>

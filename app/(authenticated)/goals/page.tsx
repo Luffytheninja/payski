@@ -2,19 +2,32 @@
 
 import { motion } from "framer-motion"
 import { Plus, ChevronRight, Sparkles } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { CircularProgress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Sheet } from "@/components/ui/sheet"
 import { Input, CurrencyInput } from "@/components/ui/input"
-import { mockGoals, formatCurrency, getGoalProgress } from "@/lib/mock-data"
+import { formatCurrency, getGoalProgress } from "@/lib/mock-data"
+import { getGoalsData } from "@/lib/actions"
 import type { Goal } from "@/lib/types"
 
 export default function GoalsPage() {
-    const [goals, setGoals] = useState(mockGoals)
+    const [goals, setGoals] = useState<Goal[]>([])
     const [showAddSheet, setShowAddSheet] = useState(false)
     const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        getGoalsData().then(res => {
+            setGoals(res)
+            setIsLoading(false)
+        })
+    }, [])
+
+    if (isLoading) {
+        return <div className="min-h-screen flex items-center justify-center font-mono text-sm">Loading goals...</div>
+    }
 
     const totalSaved = goals.reduce((sum, g) => sum + g.currentAmount, 0)
     const totalTarget = goals.reduce((sum, g) => sum + g.targetAmount, 0)

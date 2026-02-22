@@ -2,21 +2,35 @@
 
 import { motion } from "framer-motion"
 import { ThumbsUp, ThumbsDown, TrendingUp, AlertTriangle, Lightbulb, Target, ChevronRight, Sparkles } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { mockInsights } from "@/lib/mock-data"
+import { getInsightsData, updateInsightFeedback } from "@/lib/actions"
 import type { Insight, InsightType } from "@/lib/types"
 
 export default function InsightsPage() {
-    const [insights, setInsights] = useState(mockInsights)
+    const [insights, setInsights] = useState<Insight[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
-    const handleFeedback = (id: string, feedback: "helpful" | "not_helpful") => {
+    useEffect(() => {
+        getInsightsData().then(res => {
+            setInsights(res)
+            setIsLoading(false)
+        })
+    }, [])
+
+    const handleFeedback = async (id: string, feedback: "helpful" | "not_helpful") => {
+        // Optimistic update
         setInsights(prev =>
             prev.map(ins =>
                 ins.id === id ? { ...ins, feedback } : ins
             )
         )
+        await updateInsightFeedback(id, feedback)
+    }
+
+    if (isLoading) {
+        return <div className="min-h-screen flex items-center justify-center font-mono text-sm">Loading insights...</div>
     }
 
     return (

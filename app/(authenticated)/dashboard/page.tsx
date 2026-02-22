@@ -2,25 +2,51 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { Eye, EyeOff, ArrowUpRight, ArrowDownLeft, QrCode, Plus, ChevronRight } from "lucide-react"
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useEffect } from "react"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { TransactionDetail } from "@/components/transaction-detail"
-import {
-    mockAccounts,
-    mockTransactions,
-    getTotalBalance,
-    getRecentTransactions,
-    formatCurrency
-} from "@/lib/mock-data"
-import type { Transaction } from "@/lib/types"
+import { formatCurrency } from "@/lib/mock-data"
+import { getDashboardData, seedDemoData } from "@/lib/actions"
+import type { Transaction, Account } from "@/lib/types"
 
 export default function DashboardPage() {
     const [showBalance, setShowBalance] = useState(true)
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
-    const totalBalance = getTotalBalance()
-    const recentTransactions = getRecentTransactions(5)
+    const [data, setData] = useState<{ accounts: Account[], recentTransactions: Transaction[], totalBalance: number } | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        getDashboardData().then(res => {
+            setData(res)
+            setIsLoading(false)
+        })
+    }, [])
+
+    const handleSeedData = async () => {
+        setIsLoading(true)
+        await seedDemoData()
+        const res = await getDashboardData()
+        setData(res)
+        setIsLoading(false)
+    }
+
+    if (isLoading) {
+        return <div className="min-h-screen flex items-center justify-center font-mono text-sm">Loading database...</div>
+    }
+
+    if (data?.accounts.length === 0) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 space-y-4 text-center">
+                <h2 className="text-2xl font-black">No Data Found</h2>
+                <p className="font-mono text-muted-foreground">Your account is currently empty.</p>
+                <Button onClick={handleSeedData}>Generate Demo Data</Button>
+            </div>
+        )
+    }
+
+    const { totalBalance, recentTransactions, accounts } = data!
 
     return (
         <div className="min-h-screen">
@@ -99,7 +125,7 @@ export default function DashboardPage() {
                         </button>
                     </div>
                     <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 -mx-6 px-6">
-                        {mockAccounts.map((account, i) => (
+                        {accounts.map((account, i) => (
                             <motion.div
                                 key={account.id}
                                 initial={{ opacity: 0, x: 20 }}
