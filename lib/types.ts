@@ -6,10 +6,11 @@
 export interface Account {
     id: string
     name: string
-    type: "checking" | "savings" | "goal"
+    type: string // Using string to match Prisma, but can be "checking" | "savings" | "goal" in UI
     balance: number
     currency: string
-    color?: string
+    color: string | null
+    userId: string
 }
 
 // Transaction Types
@@ -20,18 +21,14 @@ export interface Transaction {
     id: string
     amount: number
     currency: string
-    type: TransactionType
-    status: TransactionStatus
+    type: string // Matching Prisma string
+    status: string // Matching Prisma string
     description: string
-    merchant?: string
+    merchant: string | null
     category: string
     date: Date
     accountId: string
-    metadata?: {
-        icon?: string
-        location?: string
-        notes?: string
-    }
+    metadata: any // Prisma Json type
 }
 
 // Timeline Types
@@ -54,17 +51,16 @@ export type InsightType = "spending" | "forecast" | "anomaly" | "opportunity" | 
 
 export interface Insight {
     id: string
-    type: InsightType
+    type: string // Matching Prisma string
     title: string
     description: string
     explanation: string // Human-readable AI explanation
     createdAt: Date
     isActionable: boolean
-    action?: {
-        label: string
-        type: string
-    }
-    feedback?: "helpful" | "not_helpful" | null
+    actionLabel?: string | null
+    actionType?: string | null
+    feedback?: string | null
+    userId: string
 }
 
 // Goal Types
@@ -74,9 +70,10 @@ export interface Goal {
     targetAmount: number
     currentAmount: number
     currency: string
-    deadline?: Date
+    deadline: Date | null
     color: string
     icon: string
+    userId: string
     contributions: GoalContribution[]
 }
 

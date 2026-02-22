@@ -134,12 +134,12 @@ export default function DashboardPage() {
                             >
                                 <Card
                                     className="w-48 flex-shrink-0 hover:-translate-y-1 cursor-pointer"
-                                    style={{ borderColor: account.color }}
+                                    style={{ borderColor: account.color || undefined }}
                                 >
                                     <CardContent className="pt-4">
                                         <div
                                             className="w-3 h-3 mb-2"
-                                            style={{ backgroundColor: account.color }}
+                                            style={{ backgroundColor: account.color || undefined }}
                                         />
                                         <p className="font-mono text-xs text-muted-foreground uppercase">{account.type}</p>
                                         <p className="font-bold text-sm mb-2">{account.name}</p>
@@ -237,7 +237,7 @@ function TransactionRow({
                             {isCredit ? "+" : "-"}{formatCurrency(transaction.amount)}
                         </p>
                         {transaction.status !== "completed" && (
-                            <Badge variant={statusVariant[transaction.status]} className="mt-1">
+                            <Badge variant={statusVariant[transaction.status as keyof typeof statusVariant] || "secondary"} className="mt-1">
                                 {transaction.status}
                             </Badge>
                         )}

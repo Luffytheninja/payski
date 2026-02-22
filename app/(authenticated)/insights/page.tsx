@@ -93,7 +93,7 @@ function InsightCard({
         goal_progress: { icon: <Target size={16} />, color: "#ec4899", label: "Goal" },
     }
 
-    const config = typeConfig[insight.type]
+    const config = typeConfig[insight.type as InsightType] || typeConfig.spending
 
     return (
         <motion.div
@@ -150,7 +150,7 @@ function InsightCard({
                             </div>
 
                             {/* Action Button */}
-                            {insight.isActionable && insight.action && (
+                            {insight.isActionable && insight.actionLabel && (
                                 <Button
                                     variant="primary"
                                     size="sm"
@@ -160,7 +160,7 @@ function InsightCard({
                                         // Handle action
                                     }}
                                 >
-                                    {insight.action.label}
+                                    {insight.actionLabel}
                                 </Button>
                             )}
 

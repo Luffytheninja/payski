@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "./prisma"
 import { mockAccounts, mockTransactions, mockInsights, mockGoals } from "./mock-data"
 import { revalidatePath } from "next/cache"
+import { Account, Transaction, Goal, Insight, TimelineEvent } from "./types"
 
 // Utility to get authenticated user ID
 async function getUserId() {
@@ -75,8 +76,8 @@ export async function seedDemoData() {
                 description: ins.description,
                 explanation: ins.explanation,
                 isActionable: ins.isActionable,
-                actionLabel: ins.action?.label,
-                actionType: ins.action?.type,
+                actionLabel: ins.actionLabel,
+                actionType: ins.actionType,
                 userId: userId,
                 createdAt: ins.createdAt,
             }
@@ -119,14 +120,14 @@ export async function getDashboardData() {
     const accounts = await prisma.account.findMany({
         where: { userId },
         orderBy: { name: 'asc' }
-    })
+    }) as unknown as Account[]
 
     const transactions = await prisma.transaction.findMany({
         where: { account: { userId } },
         orderBy: { date: 'desc' },
         take: 5,
         include: { account: true }
-    })
+    }) as unknown as Transaction[]
 
     const totalBalance = accounts.reduce((sum: number, acc: { balance: number }) => sum + acc.balance, 0)
 
@@ -137,13 +138,17 @@ export async function getDashboardData() {
     }
 }
 
+// ---------------------------------------------------------
+// Data Fetching
+// ---------------------------------------------------------
+
 export async function getGoalsData() {
     const userId = await getUserId()
     return await prisma.goal.findMany({
         where: { userId },
         include: { contributions: true },
         orderBy: { name: 'asc' }
-    })
+    }) as unknown as Goal[]
 }
 
 export async function getInsightsData() {
@@ -151,7 +156,7 @@ export async function getInsightsData() {
     return await prisma.insight.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' }
-    })
+    }) as unknown as Insight[]
 }
 
 export async function updateInsightFeedback(insightId: string, feedback: "helpful" | "not_helpful") {
@@ -174,14 +179,14 @@ export async function getTimelineData() {
     // For simplicity, we just return transactions formatted as a timeline for now
     return transactions.map((t: any) => ({
         id: t.id,
-        type: "transaction",
+        type: "transaction" as const,
         date: t.date,
         title: t.description,
         description: t.merchant || t.category,
         amount: t.type === 'debit' ? -t.amount : t.amount,
         isPast: t.date < new Date(),
         isFuture: t.date > new Date(),
-    }))
+    })) as TimelineEvent[]
 }
 
 // ---------------------------------------------------------

@@ -22,6 +22,7 @@ export const mockAccounts: Account[] = [
         balance: 4892.50,
         currency: "USD",
         color: "#FAFF00",
+        userId: "user_001",
     },
     {
         id: "acc_savings",
@@ -30,6 +31,7 @@ export const mockAccounts: Account[] = [
         balance: 12450.00,
         currency: "USD",
         color: "#22c55e",
+        userId: "user_001",
     },
 ]
 
@@ -148,8 +150,10 @@ export const mockInsights: Insight[] = [
         explanation: "You've visited Blue Bottle Coffee 8 times this month, compared to 5 times last month. That's an extra $15.97 on your caffeine habit.",
         createdAt: today,
         isActionable: true,
-        action: { label: "Set Budget", type: "create_budget" },
+        actionLabel: "Set Budget",
+        actionType: "create_budget",
         feedback: null,
+        userId: "user_001"
     },
     {
         id: "ins_002",
@@ -160,6 +164,7 @@ export const mockInsights: Insight[] = [
         createdAt: today,
         isActionable: false,
         feedback: null,
+        userId: "user_001"
     },
     {
         id: "ins_003",
@@ -169,8 +174,10 @@ export const mockInsights: Insight[] = [
         explanation: "This Spotify Premium charge is higher than your usual $9.99. It might be an annual plan upgrade or an error worth checking.",
         createdAt: today,
         isActionable: true,
-        action: { label: "Review", type: "view_transaction" },
+        actionLabel: "Review",
+        actionType: "view_transaction",
         feedback: null,
+        userId: "user_001"
     },
     {
         id: "ins_004",
@@ -180,8 +187,10 @@ export const mockInsights: Insight[] = [
         explanation: "You have a surplus this pay period. Moving $500 to your Rainy Day fund would get you 85% to your emergency fund goal.",
         createdAt: yesterday,
         isActionable: true,
-        action: { label: "Transfer", type: "transfer" },
+        actionLabel: "Transfer",
+        actionType: "transfer",
         feedback: null,
+        userId: "user_001"
     },
 ]
 
@@ -198,6 +207,7 @@ export const mockGoals: Goal[] = [
         deadline: new Date("2025-06-01"),
         color: "#22c55e",
         icon: "🛡️",
+        userId: "user_001",
         contributions: [
             { id: "c1", amount: 500, date: new Date("2025-01-01") },
             { id: "c2", amount: 500, date: new Date("2025-01-15") },
@@ -212,6 +222,7 @@ export const mockGoals: Goal[] = [
         deadline: new Date("2025-12-01"),
         color: "#ef4444",
         icon: "✈️",
+        userId: "user_001",
         contributions: [
             { id: "c3", amount: 300, date: new Date("2025-01-10") },
         ],
@@ -222,8 +233,10 @@ export const mockGoals: Goal[] = [
         targetAmount: 2500,
         currentAmount: 850,
         currency: "USD",
+        deadline: null,
         color: "#8b5cf6",
         icon: "💻",
+        userId: "user_001",
         contributions: [],
     },
 ]

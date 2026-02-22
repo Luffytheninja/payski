@@ -35,7 +35,7 @@ export function TransactionDetail({ transaction, onClose }: TransactionDetailPro
         failed: { icon: AlertCircle, color: "#ef4444", label: "Failed" },
     }
 
-    const config = statusConfig[transaction.status]
+    const config = statusConfig[transaction.status as keyof typeof statusConfig] || statusConfig.pending
     const StatusIcon = config.icon
 
     const handleCopyId = () => {
