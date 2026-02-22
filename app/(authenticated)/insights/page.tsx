@@ -11,10 +11,15 @@ import type { Insight, InsightType } from "@/lib/types"
 export default function InsightsPage() {
     const [insights, setInsights] = useState<Insight[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         getInsightsData().then(res => {
             setInsights(res)
+            setIsLoading(false)
+        }).catch(err => {
+            console.error(err)
+            setError(err.message || "Failed to load insights data.")
             setIsLoading(false)
         })
     }, [])
@@ -31,6 +36,17 @@ export default function InsightsPage() {
 
     if (isLoading) {
         return <div className="min-h-screen flex items-center justify-center font-mono text-sm">Loading insights...</div>
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 space-y-4 text-center">
+                <div className="w-16 h-16 bg-red-500/10 border-2 border-red-500 flex items-center justify-center text-red-500 mb-4 text-2xl">!</div>
+                <h2 className="text-2xl font-black text-red-500">Connection Error</h2>
+                <p className="font-mono text-muted-foreground">{error}</p>
+                <Button onClick={() => window.location.reload()} variant="secondary" className="border-2 border-border">Try Again</Button>
+            </div>
+        )
     }
 
     return (

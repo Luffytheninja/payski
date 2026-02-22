@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Calendar, TrendingUp, TrendingDown, Clock, A
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { getTimelineData } from "@/lib/actions"
 import { formatCurrency } from "@/lib/mock-data"
 import type { TimelineEvent } from "@/lib/types"
@@ -15,16 +16,32 @@ export default function TimelinePage() {
 
     const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         getTimelineData().then(res => {
             setTimelineEvents(res)
+            setIsLoading(false)
+        }).catch(err => {
+            console.error(err)
+            setError(err.message || "Failed to load timeline data.")
             setIsLoading(false)
         })
     }, [])
 
     if (isLoading) {
         return <div className="min-h-screen flex items-center justify-center font-mono text-sm">Loading timeline...</div>
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 space-y-4 text-center">
+                <div className="w-16 h-16 bg-red-500/10 border-2 border-red-500 flex items-center justify-center text-red-500 mb-4 text-2xl">!</div>
+                <h2 className="text-2xl font-black text-red-500">Connection Error</h2>
+                <p className="font-mono text-muted-foreground">{error}</p>
+                <Button onClick={() => window.location.reload()} variant="secondary" className="border-2 border-border">Try Again</Button>
+            </div>
+        )
     }
 
     // Group events by time period
